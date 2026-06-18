@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gênio da Memória - Jogo Educativo Infantil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0f9ff;
+            overflow-x: hidden;
+        }
+        .title-font {
+            font-family: 'Fredoka One', cursive;
+        }
+        .card {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .card-front {
+            transform: rotateY(180deg);
+        }
+        @keyframes celebration {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .celebrate {
+            animation: celebration 0.5s ease-in-out;
+        }
+        .pulse {
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        /* Estilos adicionais para os botões de dificuldade */
+       .difficulty-btn-enhanced {
+            transition: all 0.15s ease-in-out;
+            border-bottom-width: 4px;
+            font-size: 1rem; /* 16px */
+            line-height: 1.5rem; /* 24px */
+       }
+       .difficulty-btn-enhanced:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+       }
+       .difficulty-icon {
+            font-size: 1.5rem; /* 24px */
+            margin-right: 0.75rem; /* 12px */
+       }
+    </style>
+
+    </head>
+<body class="min-h-screen">
+    <!-- Main Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header with Mascot/Logo -->
+        <header class="bg-gradient-to-r from-blue-500 to-purple-600 py-4 px-6 shadow-lg">
+            <div class="container mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="bg-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg overflow-hidden">
+                        <img src="images/logo_faculdade.png" alt="Logo da Faculdade" class="w-full h-full object-contain p-1">
+                    </div>
+                    <h1 class="title-font text-white text-3xl md:text-4xl">Gênio da Memória</h1>
+                </div>
+                <button id="soundToggle" class="bg-white bg-opacity-20 rounded-full p-3 text-white hover:bg-opacity-30 transition">
+                    <i class="fas fa-volume-up text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- Home Page -->
+            <div id="homePage" class="text-center">
+                <h2 class="title-font text-3xl md:text-4xl mb-8 text-purple-700">Vamos Jogar!</h2>
+                
+                <!-- Theme Selection -->
+                <div class="mb-8 space-y-10">
+
+    <div class="flex flex-col items-center">
+        <h3 class="text-2xl font-bold mb-4 text-blue-600">Para Brincar</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 lg:gap-6">
+            
+            <button class="theme-btn bg-gradient-to-br from-red-400 to-red-600 hover:from-red-500 hover:to-red-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="superheroes">
+                <i class="fa-solid fa-mask text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Super-Heróis</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-cyan-400 to-cyan-600 hover:from-cyan-500 hover:to-cyan-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="desenhos">
+                <i class="fa-solid fa-palette text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Desenhos</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-purple-400 to-purple-600 hover:from-purple-500 hover:to-purple-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="professions">
+                <i class="fa-solid fa-user-tie text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Profissões</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="famousgames">
+                <i class="fa-solid fa-gamepad text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Jogos Famosos</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-fuchsia-400 to-fuchsia-600 hover:from-fuchsia-500 hover:to-fuchsia-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="princesas">
+                <i class="fa-solid fa-crown text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Princesas</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="dinosaurs">
+                <i class="fa-solid fa-dragon text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Dinossauros</p>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="flex flex-col items-center">
+        <h3 class="text-2xl font-bold mb-4 text-green-600">Para Aprender</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 lg:gap-6 w-full max-w-3xl">
+            
+            <button class="theme-btn bg-gradient-to-br from-indigo-400 to-indigo-600 hover:from-indigo-500 hover:to-indigo-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="math">
+                <i class="fa-solid fa-calculator text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Matemática</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-pink-400 to-pink-600 hover:from-pink-500 hover:to-pink-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="words">
+                <i class="fa-solid fa-font text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Palavras</p>
+            </button>
+            
+            <button class="theme-btn bg-gradient-to-br from-sky-400 to-sky-600 hover:from-sky-500 hover:to-sky-700 rounded-xl p-4 shadow-lg transition-all transform hover:scale-105" data-theme="ingles">
+                <i class="fa-solid fa-globe text-white text-4xl mb-2"></i>
+                <p class="text-lg font-bold text-white">Inglês</p>
+            </button>
+
+        </div>
+    </div>
+
+</div>
+                
+                <!-- Difficulty Selection -->
+<div class="mb-8">
+    <h3 class="text-2xl font-bold mb-4 text-blue-600">Escolha o Desafio!</h3>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-lg mx-auto">
+
+        <button class="difficulty-btn difficulty-btn-enhanced bg-green-500 border-green-700 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg" data-difficulty="easy">
+            <i class="fas fa-laugh-beam difficulty-icon"></i>
+            <span>Ache os Pares</span>
+        </button>
+
+        <button class="difficulty-btn difficulty-btn-enhanced bg-yellow-500 border-yellow-700 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg" data-difficulty="medium">
+            <i class="fas fa-meh difficulty-icon"></i>
+            <span>Junte as Trincas</span>
+        </button>
+
+        <button class="difficulty-btn difficulty-btn-enhanced bg-red-500 border-red-700 text-white font-bold py-3 px-4 rounded-full flex items-center justify-center shadow-lg" data-difficulty="hard">
+            <i class="fas fa-dizzy difficulty-icon"></i>
+            <span>Desafio Mestre</span>
+        </button>
+
+    </div>
+</div>
+                
+                <!-- Play Button -->
+                <button id="playBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-2xl py-4 px-12 rounded-full shadow-lg transition-all transform hover:scale-105 pulse">
+                    <i class="fas fa-gamepad mr-3"></i> Jogar!
+                </button>
+            </div>
+            
+            <!-- Game Page -->
+            <div id="gamePage" class="hidden">
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                    <button id="backToMenu" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full mb-4 md:mb-0 transition-all">
+                        <i class="fas fa-arrow-left mr-2"></i> Menu
+                    </button>
+                    <div class="flex space-x-6">
+                        <div class="bg-white bg-opacity-80 rounded-lg p-3 shadow">
+                            <p class="text-gray-800 font-bold"><i class="fas fa-stopwatch mr-2 text-blue-500"></i> <span id="timer">00:00</span></p>
+                        </div>
+                        <div class="bg-white bg-opacity-80 rounded-lg p-3 shadow">
+                            <p class="text-gray-800 font-bold"><i class="fas fa-shoe-prints mr-2 text-green-500"></i> <span id="moves">0</span> Movimentos</p>
+                        </div>
+                    </div>
+                    <button id="restartGame" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-full transition-all">
+                        <i class="fas fa-redo mr-2"></i> Reiniciar
+                    </button>
+                </div>
+                
+                <div id="gameBoard" class="grid gap-4 mx-auto my-0 justify-center"></div>
+            </div>
+            
+            <!-- Game Over Modal -->
+            <div id="gameOverModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-gradient-to-br from-yellow-200 to-pink-200 rounded-xl p-8 max-w-md w-full mx-4 text-center shadow-xl">
+                    <div class="bg-white rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center shadow-lg">
+                        <i class="fas fa-trophy text-yellow-500 text-4xl"></i>
+                    </div>
+                    <h2 class="title-font text-3xl text-purple-700 mb-4">Parabéns!</h2>
+                    <p class="text-xl mb-4">Você terminou o jogo em <span id="finalTime" class="font-bold"></span> com <span id="finalMoves" class="font-bold"></span> movimentos!</p>
+                    <div class="flex justify-center space-x-4">
+                        <button id="playAgainBtn" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-6 rounded-full transition-all">
+                            <i class="fas fa-redo mr-2"></i> Jogar Novamente
+                        </button>
+                        <button id="backToMenuFromModal" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-full transition-all">
+                            <i class="fas fa-home mr-2"></i> Menu
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Admin Panel -->
+            <div id="adminPanel" class="hidden p-6 bg-white rounded-xl shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title-font text-2xl text-gray-800">Painel Administrativo</h2>
+                    <button id="backFromAdmin" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full">
+                        <i class="fas fa-arrow-left mr-2"></i> Voltar
+                    </button>
+                </div>
+                
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-100 p-4 rounded-xl">
+                        <h3 class="font-bold text-blue-800 mb-2">Tempo Médio</h3>
+                        <p id="avgTime" class="text-2xl font-bold text-blue-600">00:00</p>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-xl">
+                        <h3 class="font-bold text-green-800 mb-2">Tema Mais Jogado</h3>
+                        <p id="popularTheme" class="text-2xl font-bold text-green-600">-</p>
+                    </div>
+                    <div class="bg-purple-100 p-4 rounded-xl">
+                        <h3 class="font-bold text-purple-800 mb-2">Total de Partidas</h3>
+                        <p id="totalGames" class="text-2xl font-bold text-purple-600">0</p>
+                    </div>
+                </div>
+                
+                <!-- Difficulty Breakdown -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold mb-4 text-blue-600">Escolha o Desafio!</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-lg mx-auto">
+        
+                        <button class="difficulty-btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full transition-all transform hover:scale-105 flex items-center justify-center shadow-lg border-b-4 border-green-700 active:border-b-0 active:translate-y-1" data-difficulty="easy">
+                            <span class="bg-white/25 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                                <i class="fas fa-laugh-beam text-2xl"></i>
+                        </span>
+                        <span>Ache os Pares</span>
+                    </button>
+
+                    <button class="difficulty-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-full transition-all transform hover:scale-105 flex items-center justify-center shadow-lg border-b-4 border-yellow-700 active:border-b-0 active:translate-y-1" data-difficulty="medium">
+                        <span class="bg-white/25 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-meh text-2xl"></i>
+                        </span>
+                        <span>Junte 3 Iguais</span>
+                    </button>
+        
+                    <button class="difficulty-btn bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-full transition-all transform hover:scale-105 flex items-center justify-center shadow-lg border-b-4 border-red-700 active:border-b-0 active:translate-y-1" data-difficulty="hard">
+                        <span class="bg-white/25 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+                            <i class="fas fa-dizzy text-2xl"></i>
+                        </span>
+                        <span>Junte 3 Iguais</span>
+                    </button>
+
+                </div>
+            </div>
+                
+                <!-- Games History Table -->
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg text-gray-700">Histórico de Partidas</h3>
+                        <button id="clearStatsBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-full text-sm transition-all">
+                            <i class="fas fa-trash-alt mr-1"></i> Limpar Estatísticas
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-2 px-4 text-left">Tema</th>
+                                    <th class="py-2 px-4 text-left">Dificuldade</th>
+                                    <th class="py-2 px-4 text-left">Tempo</th>
+                                    <th class="py-2 px-4 text-left">Movimentos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gamesTable" class="divide-y divide-gray-200">
+                                <!-- Rows will be added by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer -->
+<footer class="bg-gradient-to-r from-blue-500 to-purple-600 py-4 px-6 text-white text-sm border-t border-white/20">
+    <div class="container mx-auto flex justify-between items-center">
+        
+        <div class="w-1/4">
+            <img src="images/logo_fmp.png" class="h-20 w-auto" alt="Logo FMP">
+        </div>
+
+        <div class="w-1/2 text-center">
+            <p>&copy; 2025 Gênio da Memória - Jogo Educativo para Crianças</p>
+            <p class="mt-1 text-white/80">
+                <i class="fas fa-user-circle mr-2"></i>
+                Desenvolvido por: Lucas Nunes Schmidt
+            </p>
+            <p class="mt-1 text-white/80">
+                <i class="fas fa-envelope mr-2"></i>
+                Contato: lucasnsch2@gmail.com
+            </p>
+            <a id="adminLink" class="text-white hover:text-yellow-200 underline mt-2 inline-block cursor-pointer">
+                <i class="fas fa-database mr-2"></i>
+                Dados do Site
+            </a>
+        </div>
+
+        <div class="w-1/4 flex justify-end items-center space-x-4">
+            <a href="#" target="_blank" class="text-white hover:text-yellow-200 transition" title="LinkedIn">
+                <i class="fab fa-linkedin text-2xl"></i>
+            </a>
+            <a href="#" target="_blank" class="text-white hover:text-yellow-200 transition" title="GitHub">
+                <i class="fab fa-github text-2xl"></i>
+            </a>
+        </div>
+
+    </div>
+</footer>
+    </div>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script>
+        // ==========================================================
+    // CÓDIGO JAVASCRIPT COMPLETO E ORGANIZADO - VERSÃO FINAL
+    // ==========================================================
+
+    // 1. CONFIGURAÇÃO DO FIREBASE
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7HW3Ngwn4UNhg8ufZNM2sE0ZjtOHGapc",
+      authDomain: "genio-da-memoria.firebaseapp.com",
+      projectId: "genio-da-memoria",
+      storageBucket: "genio-da-memoria.firebasestorage.app",
+      messagingSenderId: "15920098159",
+      appId: "1:15920098159:web:9f5ded5427333dbabb169a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // 2. BANCO DE DADOS DE IMAGENS
+    const cardData = {
+        superheroes: [],
+        desenhos: [],
+        professions: [],
+        famousgames: [],
+        princesas: [],
+        dinosaurs: [
+            { id: 'dinosaurs_1', name: 'T-Rex' },
+            { id: 'dinosaurs_2', name: 'Tricerátops' },
+            { id: 'dinosaurs_3', name: 'Estegossauro' },
+            { id: 'dinosaurs_4', name: 'Braquiossauro' },
+            { id: 'dinosaurs_5', name: 'Pterodáctilo' },
+            { id: 'dinosaurs_6', name: 'Velociraptor' },
+            { id: 'dinosaurs_7', name: 'Ovo de Dinossauro' },
+            { id: 'dinosaurs_8', name: 'Fóssil' },
+            { id: 'dinosaurs_9', name: 'Pegada' },
+            { id: 'dinosaurs_10', name: 'Vulcão' },
+            { id: 'dinosaurs_11', name: 'Anquilossauro' },
+            { id: 'dinosaurs_12', name: 'Parassaurolofo' },
+            { id: 'dinosaurs_13', name: 'Espinossauro' },
+            { id: 'dinosaurs_14', name: 'Diplodoco' },
+            { id: 'dinosaurs_15', 'name': 'Plessiossauro' },
+            { id: 'dinosaurs_16', name: 'Meteoro' },
+            { id: 'dinosaurs_17', name: 'Samambaia' },
+            { id: 'dinosaurs_18', name: 'Filhote no Ovo' },
+            { id: 'dinosaurs_19', name: 'Homem das Cavernas' },
+            { id: 'dinosaurs_20', name: 'Paquicefalossauro' }
+            ],
+             math: [],
+        words: [
+            { id: 'sun', name_pt: 'SOL', name_en: 'SUN', difficulty: 'easy' },
+            { id: 'cat', name_pt: 'GATO', name_en: 'CAT', difficulty: 'easy' },
+            { id: 'water', name_pt: 'ÁGUA', name_en: 'WATER', difficulty: 'easy' },
+            { id: 'house', name_pt: 'CASA', name_en: 'HOUSE', difficulty: 'easy' },
+            { id: 'hand', name_pt: 'MÃO', name_en: 'HAND', difficulty: 'easy' },
+            { id: 'bread', name_pt: 'PÃO', name_en: 'BREAD', difficulty: 'easy' },
+            { id: 'fire', name_pt: 'FOGO', name_en: 'FIRE', difficulty: 'easy' },
+            { id: 'ball', name_pt: 'BOLA', name_en: 'BALL', difficulty: 'easy' },
+            { id: 'apple', name_pt: 'MAÇÃ', name_en: 'APPLE', difficulty: 'easy' },
+            { id: 'star', name_pt: 'ESTRELA', name_en: 'STAR', difficulty: 'easy' },
+            { id: 'car', name_pt: 'CARRO', name_en: 'CAR', difficulty: 'medium' },
+            { id: 'tree', name_pt: 'ÁRVORE', name_en: 'TREE', difficulty: 'medium' },
+            { id: 'book', name_pt: 'LIVRO', name_en: 'BOOK', difficulty: 'medium' },
+            { id: 'teacher', name_pt: 'PROFESSOR(A)', name_en: 'TEACHER', difficulty: 'medium' },
+            { id: 'doctor', name_pt: 'MÉDICO(A)', name_en: 'DOCTOR', difficulty: 'medium' },
+            { id: 'school', name_pt: 'ESCOLA', name_en: 'SCHOOL', difficulty: 'medium' },
+            { id: 'fighter', name_pt: 'LUTADOR', name_en: 'FIGHTER', difficulty: 'medium' },
+            { id: 'flower', name_pt: 'FLOR', name_en: 'FLOWER', difficulty: 'medium' },
+            { id: 'lion', name_pt: 'LEÃO', name_en: 'LION', difficulty: 'medium' },
+            { id: 'fish', name_pt: 'PEIXE', name_en: 'FISH', difficulty: 'medium' },
+            { id: 'computer', name_pt: 'COMPUTADOR', name_en: 'COMPUTER', difficulty: 'hard' },
+            { id: 'elephant', name_pt: 'ELEFANTE', name_en: 'ELEPHANT', difficulty: 'hard' },
+            { id: 'rocket', name_pt: 'FOGUETE', name_en: 'ROCKET', difficulty: 'hard' },
+            { id: 'firefighter', name_pt: 'BOMBEIRO(A)', name_en: 'FIREFIGHTER', difficulty: 'hard' },
+            { id: 'chef', name_pt: 'COZINHEIRO(A)', name_en: 'CHEF', difficulty: 'hard' },
+            { id: 'dentist', name_pt: 'DENTISTA', name_en: 'DENTIST', difficulty: 'hard' },
+            { id: 'robot', name_pt: 'ROBÔ', name_en: 'ROBOT', difficulty: 'hard' },
+            { id: 'pineapple', name_pt: 'ABACAXI', name_en: 'PINEAPPLE', difficulty: 'hard' },
+            { id: 'giraffe', name_pt: 'GIRAFA', name_en: 'GIRAFFE', difficulty: 'hard' }
+        ],
+        // O tema "ingles" também usa a MESMA lista de palavras
+        ingles: [
+            { id: 'sun', name_pt: 'SOL', name_en: 'SUN', difficulty: 'easy' },
+            { id: 'cat', name_pt: 'GATO', name_en: 'CAT', difficulty: 'easy' },
+            { id: 'water', name_pt: 'ÁGUA', name_en: 'WATER', difficulty: 'easy' },
+            { id: 'house', name_pt: 'CASA', name_en: 'HOUSE', difficulty: 'easy' },
+            { id: 'hand', name_pt: 'MÃO', name_en: 'HAND', difficulty: 'easy' },
+            { id: 'bread', name_pt: 'PÃO', name_en: 'BREAD', difficulty: 'easy' },
+            { id: 'fire', name_pt: 'FOGO', name_en: 'FIRE', difficulty: 'easy' },
+            { id: 'ball', name_pt: 'BOLA', name_en: 'BALL', difficulty: 'easy' },
+            { id: 'apple', name_pt: 'MAÇÃ', name_en: 'APPLE', difficulty: 'easy' },
+            { id: 'star', name_pt: 'ESTRELA', name_en: 'STAR', difficulty: 'easy' },
+            { id: 'car', name_pt: 'CARRO', name_en: 'CAR', difficulty: 'medium' },
+            { id: 'tree', name_pt: 'ÁRVORE', name_en: 'TREE', difficulty: 'medium' },
+            { id: 'book', name_pt: 'LIVRO', name_en: 'BOOK', difficulty: 'medium' },
+            { id: 'teacher', name_pt: 'PROFESSOR(A)', name_en: 'TEACHER', difficulty: 'medium' },
+            { id: 'doctor', name_pt: 'MÉDICO(A)', name_en: 'DOCTOR', difficulty: 'medium' },
+            { id: 'school', name_pt: 'ESCOLA', name_en: 'SCHOOL', difficulty: 'medium' },
+            { id: 'fighter', name_pt: 'LUTADOR', name_en: 'FIGHTER', difficulty: 'medium' },
+            { id: 'flower', name_pt: 'FLOR', name_en: 'FLOWER', difficulty: 'medium' },
+            { id: 'lion', name_pt: 'LEÃO', name_en: 'LION', difficulty: 'medium' },
+            { id: 'fish', name_pt: 'PEIXE', name_en: 'FISH', difficulty: 'medium' },
+            { id: 'computer', name_pt: 'COMPUTADOR', name_en: 'COMPUTER', difficulty: 'hard' },
+            { id: 'elephant', name_pt: 'ELEFANTE', name_en: 'ELEPHANT', difficulty: 'hard' },
+            { id: 'rocket', name_pt: 'FOGUETE', name_en: 'ROCKET', difficulty: 'hard' },
+            { id: 'firefighter', name_pt: 'BOMBEIRO(A)', name_en: 'FIREFIGHTER', difficulty: 'hard' },
+            { id: 'chef', name_pt: 'COZINHEIRO(A)', name_en: 'CHEF', difficulty: 'hard' },
+            { id: 'dentist', name_pt: 'DENTISTA', name_en: 'DENTIST', difficulty: 'hard' },
+            { id: 'robot', name_pt: 'ROBÔ', name_en: 'ROBOT', difficulty: 'hard' },
+            { id: 'pineapple', name_pt: 'ABACAXI', name_en: 'PINEAPPLE', difficulty: 'hard' },
+            { id: 'giraffe', name_pt: 'GIRAFA', name_en: 'GIRAFFE', difficulty: 'hard' }
+        ]
+    };
+
+    // 3. VARIÁVEIS DE ESTADO DO JOGO (DECLARADAS APENAS UMA VEZ)
+    let selectedTheme = null;
+    let selectedDifficulty = null;
+    let gameActive = false;
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let moves = 0;
+    let matchedPairs = 0;
+    let timerInterval = null;
+    let seconds = 0;
+    let soundEnabled = true;
+
+    // 4. SONS DO JOGO
+    const sounds = {
+        flip: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-page-turn-swing-1105.mp3'),
+        match: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3'),
+        win: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3'),
+        error: new Audio('https://assets.mixkit.co/sfx/preview/mixkit-game-show-wrong-answer-1985.mp3')
+    };
+
+    // 5. ELEMENTOS DO DOM (referências aos elementos HTML)
+    const homePage = document.getElementById('homePage');
+    const gamePage = document.getElementById('gamePage');
+    const gameBoard = document.getElementById('gameBoard');
+    const gameOverModal = document.getElementById('gameOverModal');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminLink = document.getElementById('adminLink');
+    const soundToggle = document.getElementById('soundToggle');
+    const themeButtons = document.querySelectorAll('.theme-btn');
+    const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+    const playBtn = document.getElementById('playBtn');
+    const backToMenu = document.getElementById('backToMenu');
+    const restartGame = document.getElementById('restartGame');
+    const playAgainBtn = document.getElementById('playAgainBtn');
+    const backToMenuFromModal = document.getElementById('backToMenuFromModal');
+    const backFromAdmin = document.getElementById('backFromAdmin');
+    const clearStatsBtn = document.getElementById('clearStatsBtn');
+    const timerElement = document.getElementById('timer');
+    const movesElement = document.getElementById('moves');
+    const finalTime = document.getElementById('finalTime');
+    const finalMoves = document.getElementById('finalMoves');
+    const gamesTable = document.getElementById('gamesTable');
+    const avgTimeElement = document.getElementById('avgTime');
+    const popularThemeElement = document.getElementById('popularTheme');
+    const totalGamesElement = document.getElementById('totalGames');
+    const easyGamesElement = document.getElementById('easyGames');
+    const mediumGamesElement = document.getElementById('mediumGames');
+    const hardGamesElement = document.getElementById('hardGames');
+    
+    // 6. EVENT LISTENERS (escutadores de eventos de clique)
+    themeButtons.forEach(button => button.addEventListener('click', selectTheme));
+    difficultyButtons.forEach(button => button.addEventListener('click', selectDifficulty));
+    playBtn.addEventListener('click', startGame);
+    backToMenu.addEventListener('click', goToHomePage);
+    restartGame.addEventListener('click', restartCurrentGame);
+    playAgainBtn.addEventListener('click', playAgain);
+    backToMenuFromModal.addEventListener('click', goToHomePage);
+    adminLink.addEventListener('click', showAdminPanel);
+    backFromAdmin.addEventListener('click', goToHomePage);
+    clearStatsBtn.addEventListener('click', clearStatistics);
+    soundToggle.addEventListener('click', toggleSound);
+    
+    // 7. FUNÇÕES DO JOGO (aqui estão todas as funções, sem duplicatas)
+    function selectTheme(e) {
+        selectedTheme = e.currentTarget.dataset.theme;
+        themeButtons.forEach(button => button.classList.remove('ring-4', 'ring-offset-2', 'ring-purple-700'));
+        e.currentTarget.classList.add('ring-4', 'ring-offset-2', 'ring-purple-700');
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        if (selectedDifficulty) {
+            playBtn.disabled = false;
+            playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    
+    function selectDifficulty(e) {
+        selectedDifficulty = e.currentTarget.dataset.difficulty;
+        difficultyButtons.forEach(button => button.classList.remove('ring-4', 'ring-offset-2', 'ring-purple-700'));
+        e.currentTarget.classList.add('ring-4', 'ring-offset-2', 'ring-purple-700');
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        if (selectedTheme) {
+            playBtn.disabled = false;
+            playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    
+    function startGame() {
+        if (!selectedTheme || !selectedDifficulty) return;
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        homePage.classList.add('hidden');
+        gamePage.classList.remove('hidden');
+        moves = 0;
+        matchedPairs = 0;
+        movesElement.textContent = moves;
+        
+        let cardCount;
+        switch (selectedDifficulty) {
+            case 'easy': cardCount = 8; break;
+            case 'medium': cardCount = 12; break;
+            case 'hard': cardCount = 18; break;
+            default: cardCount = 8;
+        }
+
+        // ==========================================================
+        // VERIFICAÇÃO DE SEGURANÇA CORRIGIDA
+        // ==========================================================
+        // Esta checagem agora só acontece se o tema NÃO FOR matemática.
+        if (selectedTheme !== 'math' && cardData[selectedTheme].length < (cardCount / (selectedDifficulty === 'easy' ? 2 : 3))) {
+             alert(`Tema "${selectedTheme}" não tem imagens suficientes para esta dificuldade.`);
+             goToHomePage();
+             return;
+        }
+        // ==========================================================
+        
+        createGameBoard(cardCount);
+        startTimer();
+        gameActive = true;
+    }
+    
+    function createGameBoard(cardCount) {
+        gameBoard.innerHTML = '';
+        let gridCols = cardCount === 8 ? 4 : (cardCount === 12 ? 4 : 6);
+        gameBoard.style.gridTemplateColumns = `repeat(${gridCols}, minmax(80px, 120px))`;
+
+        const itemsPerMatch = selectedDifficulty === 'easy' ? 2 : 3;
+        const uniqueItemsNeeded = cardCount / itemsPerMatch;
+        
+        let availableItems = [];
+        
+        // ==========================================================
+        // LÓGICA FINAL PARA GERAÇÃO RANDÔMICA DE MATEMÁTICA
+        // ==========================================================
+        if (selectedTheme === 'math') {
+            const generatedItems = new Set();
+            while (generatedItems.size < uniqueItemsNeeded) {
+                let problem, solution;
+                if (selectedDifficulty === 'easy') {
+                    // Nível Fácil: Gera números únicos de 1 a 10
+                    solution = Math.floor(Math.random() * 10) + 1;
+                    problem = solution.toString();
+                } else if (selectedDifficulty === 'medium') {
+                    // Nível Médio: Gera somas simples
+                    const num1 = Math.floor(Math.random() * 9) + 1; // Números de 1 a 9
+                    const num2 = Math.floor(Math.random() * 9) + 1;
+                    solution = num1 + num2;
+                    problem = `${num1} + ${num2} = ${solution}`;
+                } else { // Nível Difícil
+                    // Nível Difícil: Gera tabuadas de 1 a 10
+                    const num1 = Math.floor(Math.random() * 10) + 1;
+                    const num2 = Math.floor(Math.random() * 10) + 1;
+                    solution = num1 * num2;
+                    problem = `${num1} x ${num2} = ${solution}`;
+                }
+                generatedItems.add(problem);
+            }
+            availableItems = Array.from(generatedItems).map((problem, index) => ({
+                id: `math_rand_${index}`, name: problem, difficulty: selectedDifficulty
+            }));
+        } 
+        else if (selectedTheme === 'words' || selectedTheme === 'ingles') {
+            availableItems = cardData[selectedTheme].filter(item => item.difficulty === selectedDifficulty);
+        } else {
+            availableItems = [...cardData[selectedTheme]];
+        }
+        // ==========================================================
+
+        // O resto da função continua exatamente igual
+        shuffleArray(availableItems);
+        const itemsForGame = availableItems.slice(0, uniqueItemsNeeded);
+        
+        let cardIdentifiers = [];
+        for (let i = 0; i < itemsPerMatch; i++) {
+            cardIdentifiers.push(...itemsForGame);
+        }
+        shuffleArray(cardIdentifiers);
+
+        cardIdentifiers.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card w-full aspect-square rounded-xl cursor-pointer shadow-lg';
+            card.dataset.cardId = item.id;
+            
+            const displayName = (selectedTheme === 'ingles') ? item.name_en : (item.name_pt || item.name);
+            card.dataset.cardName = displayName;
+
+            const cardInner = document.createElement('div');
+            cardInner.className = 'card-inner relative w-full h-full';
+            
+            const cardBack = document.createElement('div');
+            cardBack.className = 'card-face card-back bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center';
+            cardBack.innerHTML = '<div class="text-white text-5xl font-bold">?</div>';
+
+            const cardFront = document.createElement('div');
+            cardFront.className = 'card-face card-front rounded-xl overflow-hidden bg-white flex flex-col items-stretch justify-center p-1';
+
+            if (selectedTheme === 'math') {
+                // Define a lousa como fundo
+                cardFront.style.backgroundImage = `url('images/math/lousa_bg.jpg')`;
+                cardFront.style.backgroundSize = 'cover';
+                cardFront.style.backgroundPosition = 'center';
+
+                const textOverlay = document.createElement('div');
+                // As classes abaixo garantem o alinhamento em coluna (um em cima do outro)
+                textOverlay.className = 'w-full h-full flex flex-col items-center justify-center text-white title-font p-2 text-center';
+                
+                // AQUI ESTÁ A LÓGICA CORRETA PARA QUEBRAR A LINHA
+                if (item.name.includes('=')) {
+                    // Se for uma equação, quebra em duas linhas
+                    const parts = item.name.split('=');
+                    const operation = parts[0].trim() + ' =';
+                    const result = parts[1].trim();
+                    
+                    // Usamos innerHTML para criar duas linhas separadas
+                    textOverlay.innerHTML = `
+                        <span class="text-2xl">${operation}</span>
+                        <span class="text-2xl font-bold">${result}</span>
+                    `;
+                } else {
+                    // Se for só um número, exibe ele grande
+                    textOverlay.textContent = item.name;
+                    textOverlay.classList.add('text-5xl');
+                }
+                
+                cardFront.appendChild(textOverlay);
+            } else {
+                const imgDiv = document.createElement('div');
+                imgDiv.className = 'w-full h-4/5 flex-grow bg-contain bg-no-repeat bg-center';
+                
+                let imagePath = `images/${selectedTheme}/${item.id}.jpeg`;
+                if(selectedTheme === 'words' || selectedTheme === 'ingles') {
+                    imagePath = `images/vocabulario/${item.id}.jpeg`;
+                }
+                imgDiv.style.backgroundImage = `url('${imagePath}')`;
+
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'w-full h-1/5 text-center font-bold text-gray-800 text-sm flex items-center justify-center';
+                nameDiv.textContent = displayName;
+
+                cardFront.appendChild(imgDiv);
+                cardFront.appendChild(nameDiv);
+            }
+            
+            cardInner.appendChild(cardBack);
+            cardInner.appendChild(cardFront);
+            card.appendChild(cardInner);
+            card.addEventListener('click', flipCard);
+            gameBoard.appendChild(card);
+        });
+    }
+// ==========================================================
+    // BLOCO DE LÓGICA DO JOGO - VERSÃO COM LÓGICA DE TRINCA
+    // ==========================================================
+    
+// ==========================================================
+    // BLOCO DE LÓGICA DO JOGO - VERSÃO FINAL COM TRINCA CORRIGIDA
+    // ==========================================================
+    
+ // ==========================================================
+    // BLOCO DE LÓGICA DO JOGO - VERSÃO COM CORREÇÃO FINAL DA TRINCA
+    // ==========================================================
+    
+    // ==========================================================
+// BLOCO DE LÓGICA DO JOGO - VERSÃO FINAL E CORRIGIDA
+// ==========================================================
+
+function flipCard() {
+    // Trava para não clicar na mesma carta duas vezes ou em mais de 3 cartas
+    if (!gameActive || lockBoard || this === firstCard || this === secondCard) return;
+
+    this.classList.add('flipped');
+    // A chamada para a função de falar será adicionada aqui depois
+    if (soundEnabled) sounds.flip.play().catch(e => {});
+
+    if (selectedDifficulty === 'easy') {
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+        secondCard = this;
+        moves++;
+        movesElement.textContent = moves;
+        lockBoard = true;
+        checkForMatch();
+    } else { // Lógica para Médio e Difícil (trincas)
+        if (!firstCard) {
+            firstCard = this;
+            return;
+        }
+        if (!secondCard) {
+            secondCard = this;
+            return;
+        }
+        thirdCard = this;
+        moves++;
+        movesElement.textContent = moves;
+        lockBoard = true;
+        checkForMatch();
+    }
+}
+
+function checkForMatch() {
+    if (selectedDifficulty === 'easy') {
+        let isMatch = firstCard.dataset.cardId === secondCard.dataset.cardId;
+        isMatch ? disableCards([firstCard, secondCard]) : unflipCards([firstCard, secondCard]);
+    } else {
+        let isMatch = firstCard.dataset.cardId === secondCard.dataset.cardId && secondCard.dataset.cardId === thirdCard.dataset.cardId;
+        isMatch ? disableCards([firstCard, secondCard, thirdCard]) : unflipCards([firstCard, secondCard, thirdCard]);
+    }
+}
+
+function disableCards(cards) {
+    if (soundEnabled) sounds.match.play().catch(e => {});
+    cards.forEach(card => card.removeEventListener('click', flipCard));
+    
+    matchedPairs++;
+    const itemsPerMatch = selectedDifficulty === 'easy' ? 2 : 3;
+    const totalMatchesNeeded = gameBoard.children.length / itemsPerMatch;
+    
+    if (matchedPairs === totalMatchesNeeded) {
+        setTimeout(endGame, 500);
+    }
+    resetBoard();
+}
+
+function unflipCards(cards) {
+    if (soundEnabled) sounds.error.play().catch(e => {});
+    setTimeout(() => {
+        // Abordagem direta para garantir que todas as cartas sejam desviradas
+        if (cards[0]) cards[0].classList.remove('flipped');
+        if (cards[1]) cards[1].classList.remove('flipped');
+        if (cards[2]) cards[2].classList.remove('flipped');
+        
+        resetBoard();
+    }, 1200);
+}
+
+function resetBoard() {
+    [firstCard, secondCard, thirdCard, lockBoard] = [null, null, null, false];
+}
+
+    function endGame() {
+        clearInterval(timerInterval);
+        gameActive = false;
+        if (soundEnabled) sounds.win.play().catch(e => {});
+        const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+        const timeString = `${minutes}:${remainingSeconds}`;
+        finalTime.textContent = timeString;
+        finalMoves.textContent = moves;
+        saveGameStats(selectedTheme, selectedDifficulty, seconds, moves);
+        gameOverModal.classList.remove('hidden');
+    }
+
+    function saveGameStats(theme, difficulty, gameTime, movesCount) {
+        const themeNames = {
+            superheroes: 'Super-Heróis', cars: 'Carros', professions: 'Profissões',
+            famousgames: 'Jogos Famosos', sports: 'Esportes', dinosaurs: 'Dinossauros',
+            math: 'Matemática', words: 'Palavras', culture: 'Cultura'
+        };
+        const difficultyNames = { easy: 'Fácil', medium: 'Médio', hard: 'Difícil' };
+        const newStat = {
+            theme: themeNames[theme] || theme,
+            difficulty: difficultyNames[difficulty] || difficulty,
+            time: `${Math.floor(gameTime / 60).toString().padStart(2, '0')}:${(gameTime % 60).toString().padStart(2, '0')}`,
+            seconds: gameTime,
+            moves: movesCount,
+            timestamp: new Date().toISOString()
+        };
+        const gameStats = JSON.parse(localStorage.getItem('memoryGameStats')) || [];
+        gameStats.push(newStat);
+        localStorage.setItem('memoryGameStats', JSON.stringify(gameStats));
+        db.collection("partidas").add(newStat)
+            .then(() => console.log("Dados salvos no Firebase!"))
+            .catch((error) => console.error("Erro ao salvar no Firebase: ", error));
+    }
+
+    function startTimer() {
+        seconds = 0;
+        timerElement.textContent = '00:00';
+        if (timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            seconds++;
+            const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const remainingSeconds = (seconds % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${minutes}:${remainingSeconds}`;
+        }, 1000);
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function restartCurrentGame() {
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        gameOverModal.classList.add('hidden');
+        startGame();
+    }
+
+    function playAgain() {
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        gameOverModal.classList.add('hidden');
+        startGame();
+    }
+
+    function goToHomePage() {
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        gameActive = false;
+        firstCard = null;
+        secondCard = null;
+        if (timerInterval) clearInterval(timerInterval);
+        gameOverModal.classList.add('hidden');
+        homePage.classList.remove('hidden');
+        gamePage.classList.add('hidden');
+        adminPanel.classList.add('hidden');
+    }
+
+    function showAdminPanel(e) {
+        e.preventDefault();
+        if (soundEnabled) sounds.flip.play().catch(e => {});
+        homePage.classList.add('hidden');
+        gamePage.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        loadStatistics();
+    }
+
+    function loadStatistics() {
+        const gameStats = JSON.parse(localStorage.getItem('memoryGameStats')) || [];
+        gamesTable.innerHTML = '';
+        if (gameStats.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="4" class="py-4 text-center text-gray-500">Nenhuma estatística disponível</td>';
+            gamesTable.appendChild(row);
+            avgTimeElement.textContent = '00:00';
+            popularThemeElement.textContent = '-';
+            totalGamesElement.textContent = '0';
+            easyGamesElement.textContent = '0';
+            mediumGamesElement.textContent = '0';
+            hardGamesElement.textContent = '0';
+            return;
+        }
+        gameStats.forEach(stat => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            row.innerHTML = `
+                <td class="py-2 px-4">${stat.theme}</td>
+                <td class="py-2 px-4">${stat.difficulty}</td>
+                <td class="py-2 px-4">${stat.time}</td>
+                <td class="py-2 px-4">${stat.moves}</td>
+            `;
+            gamesTable.appendChild(row);
+        });
+        const totalGames = gameStats.length;
+        const totalSeconds = gameStats.reduce((sum, stat) => sum + stat.seconds, 0);
+        const avgSeconds = totalGames > 0 ? Math.round(totalSeconds / totalGames) : 0;
+        avgTimeElement.textContent = `${Math.floor(avgSeconds / 60).toString().padStart(2, '0')}:${(avgSeconds % 60).toString().padStart(2, '0')}`;
+        totalGamesElement.textContent = totalGames;
+        const themeCounts = {};
+        gameStats.forEach(stat => {
+            themeCounts[stat.theme] = (themeCounts[stat.theme] || 0) + 1;
+        });
+        let mostPopularTheme = '-';
+        if (Object.keys(themeCounts).length > 0) {
+            mostPopularTheme = Object.keys(themeCounts).reduce((a, b) => themeCounts[a] > themeCounts[b] ? a : b);
+        }
+        popularThemeElement.textContent = mostPopularTheme;
+        const difficultyCounts = { 'Fácil': 0, 'Médio': 0, 'Difícil': 0 };
+        gameStats.forEach(stat => {
+            if (stat.difficulty in difficultyCounts) {
+                difficultyCounts[stat.difficulty]++;
+            }
+        });
+        easyGamesElement.textContent = difficultyCounts['Fácil'];
+        mediumGamesElement.textContent = difficultyCounts['Médio'];
+        hardGamesElement.textContent = difficultyCounts['Difícil'];
+    }
+
+    function clearStatistics() {
+        if (confirm('Tem certeza que deseja limpar todas as estatísticas?')) {
+            localStorage.removeItem('memoryGameStats');
+            if (soundEnabled) sounds.flip.play().catch(e => {});
+            loadStatistics();
+        }
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        soundToggle.innerHTML = soundEnabled ? '<i class="fas fa-volume-up text-xl"></i>' : '<i class="fas fa-volume-mute text-xl"></i>';
+    }
+
+    </script>
+</body>
+</html>
